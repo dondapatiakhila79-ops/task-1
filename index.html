@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Mark List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+    input, button {
+      padding: 8px;
+      margin: 5px 0;
+      width: 100%;
+      max-width: 300px;
+      box-sizing: border-box;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    th {
+      background: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Student Mark List</h1>
+
+  <form id="studentForm">
+    <input type="text" id="name" placeholder="Student Name" required />
+    <input type="text" id="roll" placeholder="Roll Number" required />
+    <input type="number" id="mark1" placeholder="Mark for Subject 1" min="0" max="100" required />
+    <input type="number" id="mark2" placeholder="Mark for Subject 2" min="0" max="100" required />
+    <input type="number" id="mark3" placeholder="Mark for Subject 3" min="0" max="100" required />
+    <button type="submit">Add Student</button>
+  </form>
+
+  <table id="markListTable">
+    <thead>
+      <tr>
+        <th>Roll No</th>
+        <th>Name</th>
+        <th>Marks (3 Subjects)</th>
+        <th>Total</th>
+        <th>Average</th>
+        <th>Grade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Student rows go here -->
+    </tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById('studentForm');
+    const tableBody = document.querySelector('#markListTable tbody');
+    const students = [];
+
+    function calculateGrade(avg) {
+      if (avg >= 90) return 'A';
+      else if (avg >= 75) return 'B';
+      else if (avg >= 60) return 'C';
+      else if (avg >= 40) return 'D';
+      else return 'F';
+    }
+
+    function renderTable() {
+      tableBody.innerHTML = '';
+      students.forEach(s => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${s.roll}</td>
+          <td>${s.name}</td>
+          <td>${s.marks.join(', ')}</td>
+          <td>${s.total}</td>
+          <td>${s.average.toFixed(2)}</td>
+          <td>${s.grade}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = form.name.value.trim();
+      const roll = form.roll.value.trim();
+      const marks = [
+        parseInt(form.mark1.value),
+        parseInt(form.mark2.value),
+        parseInt(form.mark3.value)
+      ];
+
+      const total = marks.reduce((a, b) => a + b, 0);
+      const average = total / marks.length;
+      const grade = calculateGrade(average);
+
+      students.push({ name, roll, marks, total, average, grade });
+
+      renderTable();
+
+      form.reset();
+      form.name.focus();
+    });
+  </script>
+
+</body>
+</html>
